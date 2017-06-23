@@ -4,15 +4,15 @@ global KEYS COLORS w wRect XCENTER YCENTER PICS STIM SimpExpMod trial
 
 % This is for model exposure!
 
-prompt={'SUBJECT ID' 'fMRI: 1 = Yes; 0 = No'};
-defAns={'4444' '1'};
+prompt={'SUBJECT ID' 'Session' 'fMRI: 1 = Yes; 0 = No'};
+defAns={'4444' '1' '1'};
 
 answer=inputdlg(prompt,'Please input subject info',1,defAns);
 
 ID=str2double(answer{1});
-fmri = str2double(answer{2});
+SESS = str2double(answer{2});
+fmri = str2double(answer{3});
 % COND = str2double(answer{2});
-% SESS = str2double(answer{3});
 % prac = str2double(answer{4});
 
 
@@ -212,11 +212,6 @@ KbName('UnifyKeyNames');
 %% Where should pics go
 STIM.framerect = [XCENTER-175; wRect(4)*.05; XCENTER+175; (wRect(4)*.1)+500];
 
-%% Dat Grid
-% 6/13/17: No ratings
-% [rects,mids] = DrawRectsGrid();
-% verbage = 'How attractive is this person?';
-
 %% fMRI Synch
 
 if fmri == 1;
@@ -280,10 +275,10 @@ end
 %get the parent directory, which is one level up from mfilesdir
 savedir = [mdir filesep 'Results' filesep];
 
-cd(savedir)
-savename = ['SimpExp_Mod_' num2str(ID) '.mat'];
+% cd(savedir)
+savename = sprintf('SimpExp_Mod_%d-%d.mat',ID,SESS); %['SimpExp_Mod_' num2str(ID) '.mat'];
 
-if exist(savename,'file')==2;
+if exist([savedir savename],'file')==2;
     savename = ['SimpExp_Mod_' num2str(ID) '_' sprintf('%s_%2.0f%02.0f',date,d(4),d(5)) '.mat'];
 end
 
@@ -307,7 +302,7 @@ temp_date_cell = cell(height(SimpExpMod_table),1);
 [temp_date_cell{1:height(SimpExpMod_table)}] = deal(SimpExpMod.info.date);
 SimpExpMod_table.Date = temp_date_cell;
 
-savename_csv = [savedir filesep sprintf('SimpExp_Mod_%d-%d.csv',ID,SESS)];
+savename_csv = [savedir sprintf('SimpExp_Mod_%d-%d.csv',ID,SESS)];
 writetable(SimpExpMod_table,savename_csv);
 
 DrawFormattedText(w,'That concludes this task.','center','center',COLORS.WHITE);
